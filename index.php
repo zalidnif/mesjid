@@ -86,8 +86,7 @@ $total_donasi_semua = $total_donasi + $total_donasi_ramadhan;
                 </div>
             </div>
         </div>
-        
-        <div class="row mt-4 text-center">
+                <div class="row mt-4 text-center">
             <div class="col-md-4">
                 <a href="sholat_berjamaah.php" class="btn btn-custom w-100 mb-3">Sholat Berjamaah</a>
             </div>
