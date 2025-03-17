@@ -1,0 +1,127 @@
+<?php
+$host = "localhost";
+$user = "root"; // Ganti jika berbeda
+$pass = "";
+$dbname = "zakatfitrah_db";
+
+// Koneksi ke database
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+
+// Mengambil data statistik
+$total_kk = $conn->query("SELECT COUNT(DISTINCT nama) AS total FROM muzakki")->fetch_assoc()['total'];
+$total_muzakki = $conn->query("SELECT COUNT(*) AS total FROM muzakki")->fetch_assoc()['total'];
+$total_mustahik = $conn->query("SELECT COUNT(*) AS total FROM mustahik")->fetch_assoc()['total'];
+$total_beras = $conn->query("SELECT SUM(jumlah_bayar) AS total FROM muzakki WHERE jenis_bayar='Beras'")->fetch_assoc()['total'];
+$total_uang = $conn->query("SELECT SUM(jumlah_bayar) AS total FROM muzakki WHERE jenis_bayar='Uang'")->fetch_assoc()['total'];
+$total_penerima = $conn->query("SELECT COUNT(DISTINCT id) AS total FROM distribusi_zakat")->fetch_assoc()['total'];
+$total_beras_distribusi = $conn->query("SELECT SUM(jumlah) AS total FROM distribusi_zakat WHERE jenis='Beras'")->fetch_assoc()['total'];
+
+// Jika data kosong, set default 0
+$total_kk = $total_kk ?: 0;
+$total_muzakki = $total_muzakki ?: 0;
+$total_mustahik = $total_mustahik ?: 0;
+$total_beras = $total_beras ?: 0;
+$total_uang = $total_uang ?: 0;
+$total_penerima = $total_penerima ?: 0;
+$total_beras_distribusi = $total_beras_distribusi ?: 0;
+
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Zakat Fitrah</title>
+    <link rel="stylesheet" href="assets/css/style.css"> <!-- Sesuaikan dengan template -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css"> <!-- Bootstrap -->
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <h4 class="text-center mt-3">Zakat Fitrah</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Master Data</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Pengumpulan Zakat</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Distribusi Zakat</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Laporan</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Dashboard Zakat Fitrah</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5>Total KK</h5>
+                                <h3><?php echo $total_kk; ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5>Kategori Mustahik</h5>
+                                <h3><?php echo $total_mustahik; ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5>Total Beras Terkumpul</h5>
+                                <h3><?php echo $total_beras; ?> Kg</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h5>Total Uang Terkumpul</h5>
+                                <h3>Rp. <?php echo number_format($total_uang, 2, ',', '.'); ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5>Total Warga Penerima</h5>
+                                <h3><?php echo $total_penerima; ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body">
+                                <h5>Beras Didistribusikan</h5>
+                                <h3><?php echo $total_beras_distribusi; ?> Kg</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="text-center mt-4">
+                    <p>&copy; 2024 Aplikasi Zakat Fitrah</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
